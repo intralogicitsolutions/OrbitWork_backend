@@ -16,7 +16,11 @@ const messageConstants = {
     USER_DELETED: 'User deleted successfully',
     PROFILE_CREATED: 'Profile created successfully',
     OPERATION_NOT_PERMITTED: 'Operation not permitted',
-    PROFILE_ALREADY_EXISTS: 'Profile already exists'
+    PROFILE_ALREADY_EXISTS: 'Profile already exists',
+    FILTERED_PROFILES_FETCHED: 'Filtered profiles list fetched successfully',
+    OLD_PASSWORD_NOT_MATCHED: 'Old password not matched',
+    PASSWORD_RESET: 'Password reset successfully',
+    PASSWORD_NOT_RESET: 'Password reset unsuccessful',
 }
 
 module.exports = messageConstants;

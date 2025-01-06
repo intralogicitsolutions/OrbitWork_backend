@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const { validateRequest } = require('../validate-request');
+const { FilterTypes } = require('../../../constants/enum');
 
 const createFreelancerProfileValidation = (req, res, next) => {
     const schema = Joi.object({
@@ -88,6 +89,7 @@ const createAgencyProfileValidation = (req, res, next) => {
         firstname: Joi.string().required(),
         lastname: Joi.string().required(),
         email: Joi.string().email().required(),
+        password: Joi.string().required(),
         phone: Joi.string().optional().pattern(/^[+]?[0-9\s\(\)\-\+]+$/),
         agency_name: Joi.string().required(),
         agency_website: Joi.string().uri().optional(),
@@ -119,8 +121,19 @@ const createAgencyProfileValidation = (req, res, next) => {
     validateRequest(req.body, res, schema, next)
 }
 
+const filterProfilesValidation = (req, res, next) => {
+    const schema = Joi.object({
+        searchQuery: Joi.string(),
+        filterType: Joi.number().valid(FilterTypes.JOB, FilterTypes.TALENT, FilterTypes.PROJECT)
+    });
+    validateRequest(req.query, res, schema, next)
+}
+
+
+
 module.exports = {
     createFreelancerProfileValidation,
     createClientProfileValidation,
-    createAgencyProfileValidation
+    createAgencyProfileValidation,
+    filterProfilesValidation
 }

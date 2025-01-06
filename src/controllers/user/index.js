@@ -24,19 +24,7 @@ const deleteUser = async (req, res) => {
     }
 }
 
-const filterUsers = async (req, res) => {
-    try {
-        const response = await userService.filterUsers(req.body, res);
-        logger.info(`${messageConstants.RESPONSE_FROM} filter users API`, JSON.stringify(response));
-        res.send(response);
-    } catch (err) {
-        logger.error(`Filter users ${messageConstants.API_FAILED}`, err);
-        res.send(err);
-    }
-}
-
 module.exports = {
     getUsersList,
-    deleteUser,
-    filterUsers
+    deleteUser
 }

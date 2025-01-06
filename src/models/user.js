@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { UserTypes } = require('../constants');
 
 const userSchema = mongoose.Schema({
     firstname: {
@@ -20,6 +21,7 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: Number,
+        enum: [UserTypes.FREELANCER, UserTypes.CLIENT, UserTypes.AGENCY],
         required: true
     },
     token: {
