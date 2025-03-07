@@ -4,6 +4,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=devlopment && nodemon",
+    "start:dev": "cross-env NODE_ENV=devlopment && nodemon",
+    "start:prod": "cross-env NODE_ENV=production && nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -23,6 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.3",
     "nodemailer": "^6.9.16",
+    "nodemon": "^3.1.9",
     "winston": "^3.17.0"
   }
 }
