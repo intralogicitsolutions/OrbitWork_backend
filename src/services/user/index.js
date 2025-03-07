@@ -19,7 +19,7 @@ const getUsersList = async (body, res) => {
 
 const deleteUser = async (userId, res) => {
     return new Promise(async () => {
-        await UserSchema.deleteOne({ _id: userId }).then((result) => {
+        await UserSchema.findOneAndUpdate({ _id: userId }, { is_deleted: true }, { new: true }).then((result) => {
             logger.info(messageConstants.USER_DELETED)
             return responseData.success(res, result, messageConstants.USER_DELETED);
         }).catch((err) => {
@@ -29,14 +29,7 @@ const deleteUser = async (userId, res) => {
     })
 }
 
-const filterUsers = async (body, res) => {
-    return new Promise(async () => {
-
-    })
-}
-
 module.exports = {
     getUsersList,
-    deleteUser,
-    filterUsers
+    deleteUser
 }

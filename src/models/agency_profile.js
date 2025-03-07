@@ -98,6 +98,12 @@ const agencyProfileSchema = mongoose.Schema({
         ],
         required: false
     },
+    freelancer_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        index: { unique: true },
+        ref: 'freelancer_profiles'
+    },
     is_verified: {
         type: Boolean,
         default: false

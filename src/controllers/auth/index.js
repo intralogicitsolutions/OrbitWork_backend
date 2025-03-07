@@ -24,7 +24,31 @@ const signIn = async (req, res) => {
     }
 }
 
+const forgotPassword = async (req, res, next) => {
+    try {
+        const response = await authService.forgotPassword(req, res, next);
+        logger.info(`${messageConstants.RESPONSE_FROM} forgot password API`, JSON.stringify(response));
+        res.send(response)
+    } catch (err) {
+        logger.error(`Forgot password ${messageConstants.API_FAILED}`, err);
+        res.send(err)
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const response = await authService.resetPassword(req.body, res);
+        logger.info(`${messageConstants.RESPONSE_FROM} reset password API`, JSON.stringify(response));
+        res.send(response)
+    } catch (err) {
+        logger.error(`Reset password ${messageConstants.API_FAILED}`, err);
+        res.send(err)
+    }
+}
+
 module.exports = {
     signUp,
-    signIn
+    signIn,
+    forgotPassword,
+    resetPassword
 }

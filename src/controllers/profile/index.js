@@ -35,8 +35,20 @@ const createAgencyProfile = async (req, res) => {
     }
 }
 
+const filterProfiles = async (req, res) => {
+    try {
+        const response = await profileService.filterProfiles(req.query, res);
+        logger.info(`${messageConstants.RESPONSE_FROM} filter profiles API`, JSON.stringify(response));
+        res.send(response);
+    } catch (err) {
+        logger.error(`Filter profiles ${messageConstants.API_FAILED}`, err);
+        res.send(err);
+    }
+}
+
 module.exports = {
     createFreelancerProfile,
     createClientProfile,
-    createAgencyProfile
+    createAgencyProfile,
+    filterProfiles
 }

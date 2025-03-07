@@ -2,7 +2,7 @@ const messageConstants = require('./messages');
 const urlConstants = require('./url');
 const responseData = require('./response');
 const { mailSubjectConstants, mailTemplateConstants } = require('./mail');
-const { UserRole, Status } = require('./enum');
+const { UserRole, Status, UserTypes, FilterTypes, Tags } = require('./enum');
 
 module.exports = {
     messageConstants,
@@ -11,5 +11,8 @@ module.exports = {
     mailSubjectConstants,
     mailTemplateConstants,
     UserRole,
-    Status
+    Status,
+    UserTypes,
+    Tags,
+    FilterTypes
 }
