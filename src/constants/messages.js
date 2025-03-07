@@ -21,6 +21,17 @@ const messageConstants = {
     OLD_PASSWORD_NOT_MATCHED: 'Old password not matched',
     PASSWORD_RESET: 'Password reset successfully',
     PASSWORD_NOT_RESET: 'Password reset unsuccessful',
+    JOB_ALREADY_SUBMITTED: 'job alredy exist!',
+    JOB_CREATE_SUCCESS: 'Job created successfully!',
+    JOB_CREATE_FAILED: 'Failed to create job.',
+    NO_JOBS_FOUND: 'no jobs found',
+    JOB_FETCH_SUCCESS: 'Jobs fetched successfully.',
+    JOB_ID_REQUIRED: 'Job ID is required',
+    JOB_NOT_FOUND: 'Job not found',
+    JOB_UPDATE_SUCCESS: 'job updated successfull',
+    JOB_DELETE_SUCCESS: 'job deleted successfull'
+
+
 }
 
 module.exports = messageConstants;

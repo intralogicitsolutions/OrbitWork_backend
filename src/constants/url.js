@@ -15,6 +15,13 @@ const urlConstants = {
     CREATE_CLIENT_PROFILE: '/profile/create-client',
     CREATE_AGENCY_PROFILE: '/profile/create-agency',
     FILTER_PROFILES: '/profile/filter',
+
+    // JOB ROUTES
+    CREATE_JOB: '/job/create',
+    GET_JOB: '/job/get',
+    UPDATE_JOB: '/job/update/:_id',
+    DELETE_JOB: '/job/delete/:_id',
+
 }
 
 module.exports = urlConstants;

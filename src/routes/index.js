@@ -4,7 +4,8 @@ const api = express.Router();
 const routes = [
     `auth`,
     `user`,
-    `profile`
+    `profile`,
+    `job`,
 ];
 
 routes.forEach((route) => require(`./${route}`)(api));
