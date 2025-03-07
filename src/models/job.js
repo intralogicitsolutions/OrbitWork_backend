@@ -73,6 +73,10 @@ const jobSchema = mongoose.Schema({
         type: Boolean,
     },
 
+    document_id:{
+        type: mongoose.Schema.Types.ObjectId,
+    },
+
     proposals: {
         type: String,
         required: true

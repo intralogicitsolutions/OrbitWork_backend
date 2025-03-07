@@ -5,7 +5,7 @@ const { logger } = require('../../utils');
 
 const createJob = async (req, res) => {
     try {
-        const response = await jobService.createJob(req.body, req?.userDetails, res);
+        const response = await jobService.createJob(req.body, req?.userDetails, req?.file, res);
         logger.info(`${messageConstants.RESPONSE_FROM} create job API`, JSON.stringify(response));
         res.send(response);
     } catch (err) {
@@ -27,7 +27,7 @@ const getJob = async (req, res) => {
 
 const updateJob = async (req, res) => {
     try {
-        const response = await jobService.updateJob(req, req?.userDetails, res);
+        const response = await jobService.updateJob(req, req?.userDetails, req?.file, res);
         logger.info(`${messageConstants.RESPONSE_FROM} update job API`, JSON.stringify(response));
         res.send(response);
     } catch (err) {
@@ -47,9 +47,21 @@ const deleteJob = async (req, res) => {
     }
 }
 
+const getJobDetail = async (req, res) => {
+    try {
+        const response = await jobService.getJobDetail(req, req?.userDetails, res);
+        logger.info(`${messageConstants.RESPONSE_FROM} get job detail API`, JSON.stringify(response));
+        res.send(response);
+    } catch (err) {
+        logger.error(`Get job detail ${messageConstants.API_FAILED}`, err);
+        res.send(err);
+    }
+}
+
 module.exports = {
     createJob,
     getJob,
     updateJob,
     deleteJob,
+    getJobDetail,
 }

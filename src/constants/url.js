@@ -21,6 +21,8 @@ const urlConstants = {
     GET_JOB: '/job/get',
     UPDATE_JOB: '/job/update/:_id',
     DELETE_JOB: '/job/delete/:_id',
+    GET_JOB_DETAIL: '/job/get/:_id',
+
 
 }
 

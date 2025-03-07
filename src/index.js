@@ -6,6 +6,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 const http = require('http').createServer(app);
+const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
 
 app.use(cors({ origin: '*' }));
 
@@ -23,6 +25,23 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/api', routes);
+
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/files', express.static(path.join(__dirname, '../files')));
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
+});
+
+//const filesDir = path.join(__dirname, '../files');
+const filesDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(filesDir)) {
+    fs.mkdirSync(filesDir, { recursive: true });
+    console.log("Created 'files' directory");
+}
+
 
 const port = process.env.PORT || 3000;
 
