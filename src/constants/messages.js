@@ -29,8 +29,21 @@ const messageConstants = {
     JOB_ID_REQUIRED: 'Job ID is required',
     JOB_NOT_FOUND: 'Job not found',
     JOB_UPDATE_SUCCESS: 'job updated successfull',
-    JOB_DELETE_SUCCESS: 'job deleted successfull'
-
+    JOB_DELETE_SUCCESS: 'job deleted successfull',
+    MESSAGE_SENT_SUCCESS: "Message sent successfully",
+    MESSAGE_SENT_FAILED: "Error sending message",
+    ALL_FIELDS_REQUIRED: "All fields are required",
+    MESSAGE_FETCH_SUCCESS: "Messages fetched successfully",
+    MESSAGE_FETCH_FAILED: "Error fetching messages",
+    RECEIVER_NOT_FOUND: 'Receiver id not found',
+    MESSAGE_NOT_SENT: 'Message not sent',
+    MESSAGE_SAVED_SUCCESS: 'Message saved successfully',
+    MESSAGE_CREATION_FAILED: 'Message creation failed',
+    LIST_API_CALL_SUCCESSFULLY: 'List API called successfully',
+    LIST_FETCHED_SUCCESSFULLY: 'list fetched successfully',
+    LIST_NOT_FOUND: 'list not found',
+    ROOM_CREATE_SUCCESS: 'Room created successfully!',
+    ROOM_CREATE_FAILED: 'Failed to create room',
 
 }
 

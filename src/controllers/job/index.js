@@ -1,5 +1,4 @@
 const jobService = require('../../services/job');
-const { getUserData } = require('../../middleware');
 const { messageConstants } = require('../../constants');
 const { logger } = require('../../utils');
 

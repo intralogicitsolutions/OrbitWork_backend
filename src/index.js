@@ -8,6 +8,18 @@ const path = require('path');
 const http = require('http').createServer(app);
 const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
+/*const { socketHandler } = require('./constants/socket');*/
+
+const io = require("socket.io")(http, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"]
+    }
+  });
+
+// const io = require('socket.io')(http, {
+//     cors: { origin: '*' }
+// });
 
 app.use(cors({ origin: '*' }));
 
@@ -18,6 +30,8 @@ const routes = require('./routes');
 const { logger } = require('./utils');
 
 app.set('views', path.join(__dirname, 'public/mailTemplate'));
+app.set('socketio', io);
+
 app.set('view engine', 'ejs');
 
 app.use(express.json());
@@ -35,14 +49,32 @@ cloudinary.config({
     api_secret: process.env.CLOUD_API_SECRET,
 });
 
-//const filesDir = path.join(__dirname, '../files');
 const filesDir = path.join(__dirname, '../uploads');
 if (!fs.existsSync(filesDir)) {
     fs.mkdirSync(filesDir, { recursive: true });
     console.log("Created 'files' directory");
 }
 
+// Socket.io logic
 
+// io.on('connection', (socket) => {
+//     console.log('A user connected:', socket.id);
+
+//     socket.on('sendMessage', (data) => {
+//         console.log("Message received:", data);
+
+//         // Emit message to receiver
+//         io.to(data.receiverId).emit('receiveMessage', data);
+//     });
+
+//     socket.on('disconnect', () => {
+//         console.log('User disconnected:', socket.id);
+//     });
+// });
+
+// module.exports.io = io;
+require('./socket')(io);
+/*socketHandler(http); */
 const port = process.env.PORT || 3000;
 
 http.listen(port, () => {

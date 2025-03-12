@@ -11,7 +11,9 @@ const createJob = async (body, userDetails, file, res) => {
 
         let documnetId = null;
         if(file){
-            documnetId = await uploadFile(file);
+            const uploadedFile = await uploadFile(file);
+            documnetId = uploadedFile._id;
+           // documnetId = await uploadFile(file);
         }
 
         const job = new JobSchema({ ...body,
@@ -80,7 +82,9 @@ const updateJob = async (req, userDetails, file, res) => {
             }
             let documentId = existingJob.document_id;
             if (file) {
-                documentId = await uploadFile(file);
+                const uploadedFile = await uploadFile(file);
+                documentId = uploadedFile._id;
+               // documentId = await uploadFile(file);
             }
     
             const updatedJob = await JobSchema.findOneAndUpdate(

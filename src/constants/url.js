@@ -23,6 +23,17 @@ const urlConstants = {
     DELETE_JOB: '/job/delete/:_id',
     GET_JOB_DETAIL: '/job/get/:_id',
 
+    // MESSAGE ROUTES
+    SEND_MESSAGE: '/message/send',
+    GET_MESSAGE: '/message/get/:senderId/:receiverId',
+    MESSAGE_LIST: '/message/list',
+
+    // UPLOAD_FILE ROUTES
+    UPLOAD_FILE: '/file/upload',
+
+    // CREATE_ROOM ROUTES
+    CREATE_ROOM: '/room/create'
+
 
 }
 
