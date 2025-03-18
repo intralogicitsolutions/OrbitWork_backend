@@ -13,6 +13,15 @@ const UploadFileSchema = mongoose.Schema({
         type: String, 
         required: true 
     },
+    fileType: { 
+        type: String, 
+        enum: ["photo", "document", "audio", "video", "location"], // Allowed types
+        required: true 
+    },
+    location: {  // Optional: Stores latitude & longitude for location uploads
+        latitude: { type: Number },
+        longitude: { type: Number }
+    },
 });
 
 module.exports = mongoose.model('upload_files', UploadFileSchema);

@@ -44,6 +44,9 @@ const messageConstants = {
     LIST_NOT_FOUND: 'list not found',
     ROOM_CREATE_SUCCESS: 'Room created successfully!',
     ROOM_CREATE_FAILED: 'Failed to create room',
+    ROOM_ID_REQUIRED: 'Room id is required',
+    ROOM_NOT_FOUND: 'Room not found',
+    ROOM_UPDATE_SUCCESS: 'room updated successfull',
 
 }
 

@@ -32,7 +32,8 @@ const urlConstants = {
     UPLOAD_FILE: '/file/upload',
 
     // CREATE_ROOM ROUTES
-    CREATE_ROOM: '/room/create'
+    CREATE_ROOM: '/room/create',
+    UPDATE_ROOM: '/room/update/:id',
 
 
 }

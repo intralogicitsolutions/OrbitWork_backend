@@ -53,14 +53,13 @@ module.exports = (io) => {
             socket.emit('left_room', { message: `Left room ${room_id}` });
         });
 
-        // Chat message (handles both individual & group chat)
-
         socket.on('chat_message', async (data) => {
-            logger.info(`Data received in request body during chat_message ${JSON.stringify(data)}`)
-
+            logger.info(`Data received in request body during chat_message ${JSON.stringify(data)}`);
+        
+            let attachmentId;
             if (data.file) {
                 try {
-                    attachmentId = await uploadFile(data.file)._id; // Call upload API
+                    attachmentId = await uploadFile(data.file)._id; 
                     logger.info(`File uploaded successfully with ID: ${attachmentId}`);
                 } catch (error) {
                     logger.error(`File upload failed: ${error.message}`);
@@ -68,18 +67,35 @@ module.exports = (io) => {
                 }
             }
 
-
-            const saveMessage = await createMessage(data);
-            if (!saveMessage) {
-                logger.error(messageConstants.MESSAGE_NOT_SENT);
-                return;
-            }
-
-            // If it's a group chat, broadcast to the room
+             data.attechment_id = attachmentId || null;
+            let saveMessage;
             if (data.room_id) {
+               
+                const room = await RoomSchema.findById(data.room_id);
+                if (!room) {
+                    logger.error(`Room ID ${data.room_id} not found`);
+                    return;
+                }
+
+                const allReceivers = room.members.filter(id => id.toString() !== data.sender_id);
+
+                 data.receiver_id = allReceivers;
+                saveMessage = await createGroupMessage({ ...data, attechment_id: attachmentId, receiver_id: allReceivers  });
+        
+                if (!saveMessage) {
+                    logger.error(messageConstants.MESSAGE_NOT_SENT);
+                    return;
+                }
+        
                 io.to(data.room_id).emit('chat_message', data);
             } else {
-                // Individual chat
+                saveMessage = await createMessage({ ...data, attechment_id: attachmentId });
+        
+                if (!saveMessage) {
+                    logger.error(messageConstants.MESSAGE_NOT_SENT);
+                    return;
+                }
+        
                 const receiverSocketData = await SocketSchema.findOne({ user_id: data.receiver_id });
                 if (receiverSocketData) {
                     io.to(receiverSocketData.socket_id).emit('chat_message', data);
@@ -87,21 +103,8 @@ module.exports = (io) => {
                     logger.error(messageConstants.RECEIVER_NOT_FOUND);
                 }
             }
-            // const receiverSocketData = await SocketSchema.find({ user_id: data.receiver_id });
+        });
 
-            // const saveMessage = await createMessage(data);
-            // if (saveMessage) {
-            //     io.to(socket.id).emit('chat_message', data);
-            //     if (receiverSocketData) {
-            //         io.to(receiverSocketData[0]['socket_id']).emit('chat_message', data);
-            //     } else {
-            //         logger.error(messageConstants.RECEIVER_NOT_FOUND);
-            //     }
-            //     return saveMessage['_id'];
-            // } else {
-            //     logger.error(messageConstants.MESSAGE_NOT_SENT);
-            // }
-        })
         socket.on('disconnect', () => {
             logger.info(`User ${socket.id} disconnected`);
         })
@@ -155,3 +158,18 @@ const createMessage = async (data) => {
         }
     })
 }
+
+const createGroupMessage = async (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const groupMessageSchema = new GroupMessageSchema(data);
+            await groupMessageSchema.save().then(result => {
+                logger.info(messageConstants.MESSAGE_SAVED_SUCCESS, result);
+                return resolve(result);
+            });
+        } catch (err) {
+            logger.error(messageConstants.MESSAGE_CREATION_FAILED, err);
+            return reject(err);
+        }
+    });
+};
