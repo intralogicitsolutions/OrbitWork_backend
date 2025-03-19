@@ -1,7 +1,7 @@
 const jobController = require('../../controllers/job');
 const { jsonWebToken } = require('../../middleware');
 const { urlConstants } = require('../../constants');
-const {upload} = require('../../middleware/document_upload');
+const upload = require('../../middleware/document_upload');
 
 module.exports = (app) => {
     app.post(urlConstants.CREATE_JOB, jsonWebToken.validateToken, upload.single('files'), jobController.createJob);

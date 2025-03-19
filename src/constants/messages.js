@@ -47,6 +47,10 @@ const messageConstants = {
     ROOM_ID_REQUIRED: 'Room id is required',
     ROOM_NOT_FOUND: 'Room not found',
     ROOM_UPDATE_SUCCESS: 'room updated successfull',
+    JOB_PROPOSAL_CREATE_SUCCESS: 'job proposal created successfull',
+    JOB_PROPOSAL_CREATE_FAILED: 'Failed to create job proposal.',
+    NO_JOB_PROPOSAL_FOUND: 'no job proposal found',
+    JOB_PROPOSAL_FETCH_SUCCESS: 'Job proposal fetched successfully.',
 
 }
 

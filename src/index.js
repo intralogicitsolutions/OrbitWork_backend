@@ -8,7 +8,6 @@ const path = require('path');
 const http = require('http').createServer(app);
 const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
-/*const { socketHandler } = require('./constants/socket');*/
 
 const io = require("socket.io")(http, {
     cors: {
@@ -16,10 +15,6 @@ const io = require("socket.io")(http, {
       methods: ["GET", "POST"]
     }
   });
-
-// const io = require('socket.io')(http, {
-//     cors: { origin: '*' }
-// });
 
 app.use(cors({ origin: '*' }));
 
@@ -35,8 +30,10 @@ app.set('socketio', io);
 app.set('view engine', 'ejs');
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 
 app.use('/api', routes);
 
@@ -55,26 +52,8 @@ if (!fs.existsSync(filesDir)) {
     console.log("Created 'files' directory");
 }
 
-// Socket.io logic
-
-// io.on('connection', (socket) => {
-//     console.log('A user connected:', socket.id);
-
-//     socket.on('sendMessage', (data) => {
-//         console.log("Message received:", data);
-
-//         // Emit message to receiver
-//         io.to(data.receiverId).emit('receiveMessage', data);
-//     });
-
-//     socket.on('disconnect', () => {
-//         console.log('User disconnected:', socket.id);
-//     });
-// });
-
-// module.exports.io = io;
 require('./socket')(io);
-/*socketHandler(http); */
+
 const port = process.env.PORT || 3000;
 
 http.listen(port, () => {

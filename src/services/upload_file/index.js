@@ -1,99 +1,80 @@
-// const UploadFile = require("../../models/upload_file");
-// const cloudinary = require('cloudinary').v2;
-// const fs = require("fs");
-
-// const uploadFile = async (file, fileType, latitude = null, longitude = null) => {
-//     return new Promise(async (resolve, reject)=> {
-//         try {
-//             if (!file) {
-//                 //throw new Error("No file uploaded");
-//                 reject(new Error("No file uploaded"));
-//                 return;
-//             }
-    
-//             const result = await cloudinary.uploader.upload(file.path, {
-//                 resource_type: "auto",
-//             });
-    
-//             const uploadedFile = new UploadFile({
-//                 name: file.originalname,
-//                 size: file.size,
-//                 url: result.secure_url, 
-//             });
-    
-//             const savedFile = await uploadedFile.save();
-    
-//             fs.unlink(file.path, (err) => {
-//                 if (err) console.error("Error deleting local file:", err);
-//             });
-    
-//            // return (savedFile._id);
-//            resolve({
-//             _id: savedFile._id,
-//             name: savedFile.name,
-//             size: savedFile.size,
-//             url: savedFile.url
-//         }); 
-//         } catch (error) {
-//             throw new Error(`File upload failed: ${error.message}`);
-//         }
-//     });
-// };
-
-// module.exports = { uploadFile };
 const UploadFile = require("../../models/upload_file");
-const cloudinary = require("cloudinary").v2;
+const cloudinary = require('cloudinary').v2;
 const fs = require("fs");
 
-const uploadFile = async (file, fileType, latitude = null, longitude = null) => {
+const uploadFile = async (file, location) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!file && fileType !== "location") {
-                reject(new Error("No file uploaded"));
-                return;
+            if (!file && !location) {
+                return reject(new Error("Either a file or a location must be provided."));
             }
 
-            let uploadResult = null;
-            let fileUrl = null;
-
-            // Determine resource type for Cloudinary upload
-            let resourceType = "auto"; // Default for Cloudinary auto-detection
-            if (fileType === "photo") resourceType = "image";
-            if (fileType === "audio") resourceType = "video"; // Cloudinary handles audio under "video"
-            if (fileType === "video") resourceType = "video";
-            if (fileType === "document") resourceType = "raw"; // "raw" is used for PDFs, docs, etc.
+            let existingFile, savedFile;
 
             if (file) {
-                // Upload file to Cloudinary
-                uploadResult = await cloudinary.uploader.upload(file.path, { resource_type: resourceType });
-                fileUrl = uploadResult.secure_url;
-            }
 
-            // Create an entry for the uploaded file
-            const uploadedFile = new UploadFile({
-                name: file ? file.originalname : "Location Data",
-                size: file ? file.size : 0,
-                url: fileUrl || `geo:${latitude},${longitude}`,
-                fileType,
-                location: fileType === "location" ? { latitude, longitude } : undefined
-            });
+                existingFile = await UploadFile.findOne({ name: file.originalname });
 
-            const savedFile = await uploadedFile.save();
+                if (existingFile) {
+                    return resolve({
+                        _id: existingFile._id,
+                        name: existingFile.name,
+                        size: existingFile.size,
+                        url: existingFile.url,
+                        fileType: existingFile.fileType
+                    });
+                }
 
-            // Remove file from local storage after upload
-            if (file) {
+                const fileExtension = file.mimetype.split("/")[0]; // Get "image", "video", "audio", etc.
+                let fileType = "document";
+                if (["image", "video", "audio"].includes(fileExtension)) {
+                    fileType = fileExtension;
+                }
+
+                const result = await cloudinary.uploader.upload(file.path, {
+                    resource_type: "auto",
+                });
+
+                savedFile = new UploadFile({
+                    name: file.originalname,
+                    size: file.size,
+                    url: result.secure_url,
+                    fileType: fileType 
+                });
+
                 fs.unlink(file.path, (err) => {
                     if (err) console.error("Error deleting local file:", err);
                 });
+            } 
+
+            else if (location) {
+                existingFile = await UploadFile.findOne({ 
+                    "location.latitude": location.latitude, 
+                    "location.longitude": location.longitude 
+                });
+                if (existingFile) {
+                    return resolve({
+                        _id: existingFile._id,
+                        fileType: existingFile.fileType,
+                        location: existingFile.location
+                    });
+                }
+
+                savedFile = new UploadFile({
+                    fileType: "location",
+                    location: { latitude: location.latitude, longitude: location.longitude },
+                });
             }
 
+            const savedData = await savedFile.save();
+
             resolve({
-                _id: savedFile._id,
-                name: savedFile.name,
-                size: savedFile.size,
-                url: savedFile.url,
-                fileType: savedFile.fileType,
-                location: savedFile.location
+                _id: savedData._id,
+                name: savedData.name,
+                size: savedData.size,
+                url: savedData.url,
+                fileType: savedData.fileType,
+                location: savedData.location
             });
         } catch (error) {
             reject(new Error(`File upload failed: ${error.message}`));
@@ -102,3 +83,5 @@ const uploadFile = async (file, fileType, latitude = null, longitude = null) => 
 };
 
 module.exports = { uploadFile };
+
+

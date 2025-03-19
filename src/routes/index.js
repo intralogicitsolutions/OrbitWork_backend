@@ -8,7 +8,8 @@ const routes = [
     `job`,
     `message`,
     `upload_file`,
-    `room`
+    `room`,
+    `job_proposal`
 ];
 
 routes.forEach((route) => require(`./${route}`)(api));

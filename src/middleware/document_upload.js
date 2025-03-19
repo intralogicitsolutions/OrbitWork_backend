@@ -1,49 +1,19 @@
-// const multer = require('multer');
-// const path = require('path');
-
-// const MAX_FILE_SIZE = 5 * 1024 * 1024; 
-
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//       cb(null, path.join(__dirname, '../uploads')); 
-//     },
-//     filename: function (req, file, cb) {
-//       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-//       cb(null, uniqueSuffix + '-' + file.originalname);
-//     }
-//   });
-
-// const upload = multer({
-//       storage: storage,
-//       limits: { fileSize: MAX_FILE_SIZE },
-//     });
-
-// module.exports = upload;
-
-
 const multer = require('multer');
 const path = require('path');
 
-const MAX_SIZES = {
-    image: 5 * 1024 * 1024,  // 5MB for images
-    video: 50 * 1024 * 1024, // 50MB for videos
-    audio: 10 * 1024 * 1024, // 10MB for audio
-    document: 10 * 1024 * 1024, // 10MB for documents
-};
+const MAX_FILE_SIZE_IMAGE_DOC_AUDIO = 5 * 1024 * 1024; 
+const MAX_FILE_SIZE_VIDEO = 15 * 1024 * 1024; 
 
-// Allowed MIME types for different categories
-const FILE_TYPES = {
+const allowedMimeTypes = {
     image: ['image/jpeg', 'image/png', 'image/gif'],
-    video: ['video/mp4', 'video/mpeg'],
-    audio: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
     document: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+    audio: ['audio/mpeg', 'audio/wav'],
+    video: ['video/mp4', 'video/mpeg', 'video/quicktime']
 };
 
-// Define storage settings
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadDir = path.join(__dirname, '../uploads');
-        cb(null, uploadDir);
+        cb(null, path.join(__dirname, '../uploads'));
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -51,49 +21,38 @@ const storage = multer.diskStorage({
     }
 });
 
-// File filter to check MIME types
 const fileFilter = (req, file, cb) => {
-    const fileType = req.body.fileType; // Get fileType from request body
+    const { mimetype } = file;
 
-    if (!fileType || !FILE_TYPES[fileType]) {
-        return cb(new Error('Invalid or missing fileType parameter'), false);
+    if (allowedMimeTypes.image.includes(mimetype)) {
+        file.fileType = 'image';
+        cb(null, true);
+    } else if (allowedMimeTypes.document.includes(mimetype)) {
+        file.fileType = 'document';
+        cb(null, true);
+    } else if (allowedMimeTypes.audio.includes(mimetype)) {
+        file.fileType = 'audio';
+        cb(null, true);
+    } else if (allowedMimeTypes.video.includes(mimetype)) {
+        file.fileType = 'video';
+        cb(null, true);
+    } else {
+        cb(new Error('Invalid file type. Only images, documents, audio, and videos are allowed!'), false);
     }
-
-    if (!FILE_TYPES[fileType].includes(file.mimetype)) {
-        return cb(new Error('File type not allowed'), false);
-    }
-
-    cb(null, true);
 };
 
-// Multer upload configuration
 const upload = multer({
     storage: storage,
-    limits: (req, file, cb) => {
-        const fileType = req.body.fileType;
-        return { fileSize: MAX_SIZES[fileType] || MAX_SIZES.document }; // Default to document size
+    limits: {
+        fileSize: function (req, file, cb) {
+            if (file.fileType === 'video') {
+                cb(null, MAX_FILE_SIZE_VIDEO);
+            } else {
+                cb(null, MAX_FILE_SIZE_IMAGE_DOC_AUDIO ); 
+            }
+        }
     },
     fileFilter: fileFilter
 });
 
-// Middleware for handling location uploads (without file)
-const handleLocationUpload = (req, res, next) => {
-    const { fileType, latitude, longitude } = req.body;
-
-    if (fileType === 'location') {
-        if (!latitude || !longitude) {
-            return res.status(400).json({ error: "Latitude and Longitude are required for location uploads" });
-        }
-        req.locationData = { latitude, longitude };
-        return next(); // Move to the next middleware
-    }
-
-    upload.single('file')(req, res, (err) => {
-        if (err) {
-            return res.status(400).json({ error: err.message });
-        }
-        next();
-    });
-};
-
-module.exports = { upload, handleLocationUpload};
+module.exports = upload;
