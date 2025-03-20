@@ -63,6 +63,11 @@ const getJobProposal = async (userDetails, res) => {
                         ],
                         as: "attechmentDetails"
                     }
+                },
+                {
+                    $project: {
+                        attechment_id: 0 
+                    }
                 }
             ]);
 
@@ -164,7 +169,7 @@ const getJobProposalDetail = async (req, userDetails, res) => {
             console.log(userId, jobProposalId);
 
             const jobproposal = await JobProposalSchema.aggregate([
-                { $match: { user_id: userId , _id: new Types.ObjectId(jobProposalId)} },
+                { $match: { user_id: userId, _id: new Types.ObjectId(jobProposalId) } },
                 {
                     $lookup: {
                         from: "upload_files",
@@ -173,6 +178,11 @@ const getJobProposalDetail = async (req, userDetails, res) => {
                             { $match: { $expr: { $in: ["$_id", "$$attechmentIds"] } } }
                         ],
                         as: "attechmentDetails"
+                    }
+                },
+                {
+                    $project: {
+                        attechment_id: 0 
                     }
                 }
             ]);
