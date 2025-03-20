@@ -4,7 +4,12 @@ const api = express.Router();
 const routes = [
     `auth`,
     `user`,
-    `profile`
+    `profile`,
+    `job`,
+    `message`,
+    `upload_file`,
+    `room`,
+    `job_proposal`
 ];
 
 routes.forEach((route) => require(`./${route}`)(api));

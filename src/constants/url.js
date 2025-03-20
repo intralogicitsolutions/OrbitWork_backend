@@ -15,6 +15,34 @@ const urlConstants = {
     CREATE_CLIENT_PROFILE: '/profile/create-client',
     CREATE_AGENCY_PROFILE: '/profile/create-agency',
     FILTER_PROFILES: '/profile/filter',
+
+    // JOB ROUTES
+    CREATE_JOB: '/job/create',
+    GET_JOB: '/job/get',
+    UPDATE_JOB: '/job/update/:_id',
+    DELETE_JOB: '/job/delete/:_id',
+    GET_JOB_DETAIL: '/job/get/:_id',
+
+    // JOB_PROPOSAL ROUTES
+    CREATE_JOB_PROPOSAL: '/job-proposal/create',
+    GET_JOB_PROPOSAL: '/job-proposal/get',
+    UPDATE_JOB_PROPOSAL: '/job-proposal/update/:_id',
+    DELETE_JOB_PROPOSAL: '/job-proposal/delete/:_id',
+    GET_JOB_PROPOSAL_DETAIL: '/job-proposal/get/:_id',
+
+    // MESSAGE ROUTES
+    SEND_MESSAGE: '/message/send',
+    GET_MESSAGE: '/message/get/:senderId/:receiverId',
+    MESSAGE_LIST: '/message/list',
+
+    // UPLOAD_FILE ROUTES
+    UPLOAD_FILE: '/file/upload',
+
+    // CREATE_ROOM ROUTES
+    CREATE_ROOM: '/room/create',
+    UPDATE_ROOM: '/room/update/:id',
+
+
 }
 
 module.exports = urlConstants;
