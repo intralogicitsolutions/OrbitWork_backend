@@ -26,6 +26,9 @@ const urlConstants = {
     // JOB_PROPOSAL ROUTES
     CREATE_JOB_PROPOSAL: '/job-proposal/create',
     GET_JOB_PROPOSAL: '/job-proposal/get',
+    UPDATE_JOB_PROPOSAL: '/job-proposal/update/:_id',
+    DELETE_JOB_PROPOSAL: '/job-proposal/delete/:_id',
+    GET_JOB_PROPOSAL_DETAIL: '/job-proposal/get/:_id',
 
     // MESSAGE ROUTES
     SEND_MESSAGE: '/message/send',

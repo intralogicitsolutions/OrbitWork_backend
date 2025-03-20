@@ -13,6 +13,7 @@ const jobProposalSchema = mongoose.Schema({
     job_id: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
+        unique: true,
         ref: 'jobs'
     },
 
@@ -37,10 +38,6 @@ const jobProposalSchema = mongoose.Schema({
             ref: "upload_files",
         }
     ],
-
-    // attechment_id: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    // },
 
     created_at: {
         type: Date,

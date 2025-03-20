@@ -51,6 +51,10 @@ const messageConstants = {
     JOB_PROPOSAL_CREATE_FAILED: 'Failed to create job proposal.',
     NO_JOB_PROPOSAL_FOUND: 'no job proposal found',
     JOB_PROPOSAL_FETCH_SUCCESS: 'Job proposal fetched successfully.',
+    JOB_PROPOSAL_ALREADY_EXISTS: 'Job proposal already exists',
+    JOB_PROPOSAL_ID_REQUIRED: 'Job Proposal ID is required',
+    JOB_PROPOSAL_UPDATE_SUCCESS: 'job proposal updated successfull',
+    JOB_PROPOSAL_DELETE_SUCCESS: 'job proposal deleted successfull',
 
 }
 
