@@ -47,7 +47,8 @@ const getJob = async (userDetails, res) => {
                         as: "documentDetails"
                     }
                 },
-                { $unwind: { path: "$documentDetails", preserveNullAndEmptyArrays: true } }
+                { $unwind: { path: "$documentDetails", preserveNullAndEmptyArrays: true } },
+                { $sort: { created_at: -1 } }
             ]);
 
             if (!jobs.length) {
