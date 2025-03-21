@@ -68,7 +68,8 @@ const getJobProposal = async (userDetails, res) => {
                     $project: {
                         attechment_id: 0 
                     }
-                }
+                },
+                { $sort: { created_at: -1 } }
             ]);
 
             if (!jobproposal.length) {
