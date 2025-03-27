@@ -17,7 +17,7 @@ const MessageSchema = new mongoose.Schema({
 
     message: { 
         type: String, 
-        required: true 
+       // required: true 
     },
 
     attechment_id: {

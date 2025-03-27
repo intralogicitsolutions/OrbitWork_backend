@@ -56,18 +56,22 @@ module.exports = (io) => {
         socket.on('chat_message', async (data) => {
             logger.info(`Data received in request body during chat_message ${JSON.stringify(data)}`);
         
-            let attachmentId;
-            if (data.file) {
-                try {
-                    attachmentId = await uploadFile(data.file)._id; 
-                    logger.info(`File uploaded successfully with ID: ${attachmentId}`);
-                } catch (error) {
-                    logger.error(`File upload failed: ${error.message}`);
-                    return;
-                }
-            }
+            // let attachmentId;
 
-             data.attechment_id = attachmentId || null;
+            // if (data.file) {
+            //     try {
+            //         // const fileBuffer = Buffer.from(data.file.split(',')[1], 'base64');
+            //         const uploadedFile = await uploadFile(data.file);
+            //         attachmentId = uploadedFile._id; 
+                
+            //         logger.info(`File uploaded successfully with ID: ${attachmentId}`);
+            //     } catch (error) {
+            //         logger.error(`File upload failed: ${error.message}`);
+            //         return;
+            //     }
+            // }
+
+           //  data.attechment_id = attachmentId || null;
             let saveMessage;
             if (data.room_id) {
                
@@ -80,7 +84,7 @@ module.exports = (io) => {
                 const allReceivers = room.members.filter(id => id.toString() !== data.sender_id);
 
                  data.receiver_id = allReceivers;
-                saveMessage = await createGroupMessage({ ...data, attechment_id: attachmentId, receiver_id: allReceivers  });
+                saveMessage = await createGroupMessage({ ...data, receiver_id: allReceivers  });
         
                 if (!saveMessage) {
                     logger.error(messageConstants.MESSAGE_NOT_SENT);
@@ -89,7 +93,7 @@ module.exports = (io) => {
         
                 io.to(data.room_id).emit('chat_message', data);
             } else {
-                saveMessage = await createMessage({ ...data, attechment_id: attachmentId });
+                saveMessage = await createMessage({ ...data, });
         
                 if (!saveMessage) {
                     logger.error(messageConstants.MESSAGE_NOT_SENT);

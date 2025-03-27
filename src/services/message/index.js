@@ -3,6 +3,7 @@ const { responseData, messageConstants } = require('../../constants');
 const { logger } = require('../../utils');
 const { io } = require('../../index');
 const mongoose = require("mongoose");
+const { Types } = require('mongoose');
 
 const sendMessage = async (body, userDetails, res) => {
     return new Promise(async () => {
@@ -61,13 +62,12 @@ const getMessage = async (body, userDetails, res) => {
 }
 
 const getMessageList = async (req, user, res) => {
-    return new Promise(async () => {
-
+    try {
         let query = [];
 
-        const senderId = new mongoose.Types.ObjectId(user._id);
-        const receiverId = req.query.user_id ? new mongoose.Types.ObjectId(req.query.user_id) : null;
-        const roomId = req.query.room_id ? new mongoose.Types.ObjectId(req.query.room_id) : null;
+        const senderId = new Types.ObjectId(user._id);
+        const receiverId = req.query.user_id ? new Types.ObjectId(req.query.user_id) : null;
+        const roomId = req.query.room_id ? new Types.ObjectId(req.query.room_id) : null;
 
         if (roomId) {
             query = [
@@ -77,7 +77,7 @@ const getMessageList = async (req, user, res) => {
                         from: "users",
                         localField: "sender_id",
                         foreignField: "_id",
-                        pipeline: [{ $project: { _id: 1, firstname: 1, lastname: 1, email: 1 } }],
+                        pipeline: [{ $project: { _id: 0, firstname: 1, lastname: 1, email: 1 } }],
                         as: "sender_details",
                     },
                 },
@@ -86,7 +86,7 @@ const getMessageList = async (req, user, res) => {
                         from: "upload_files",
                         localField: "attechment_id",
                         foreignField: "_id",
-                        pipeline: [{ $project: { _id: 1, name: 1, url: 1, size: 1 } }],
+                        pipeline: [{ $project: { _id: 0, name: 1, url: 1, size: 1 } }],
                         as: "attechment_details",
                     },
                 },
@@ -95,14 +95,13 @@ const getMessageList = async (req, user, res) => {
                         from: "rooms",
                         localField: "room_id",
                         foreignField: "_id",
-                        pipeline: [{ $project: { _id: 1, name: 1, members: 1,} }],
+                        pipeline: [{ $project: { _id: 0, name: 1, members: 1 } }],
                         as: "room_details",
                     },
                 },
                 { $sort: { created_at: -1 } } 
             ];
         } 
-
         else if (receiverId) {
             query = [
                 {
@@ -118,7 +117,7 @@ const getMessageList = async (req, user, res) => {
                         from: "users",
                         localField: "sender_id",
                         foreignField: "_id",
-                        pipeline: [{ $project: { _id: 1, firstname: 1, lastname: 1, email: 1 } }],
+                        pipeline: [{ $project: { _id: 0, firstname: 1, lastname: 1, email: 1 } }],
                         as: "sender_details",
                     },
                 },
@@ -127,7 +126,7 @@ const getMessageList = async (req, user, res) => {
                         from: "users",
                         localField: "receiver_id",
                         foreignField: "_id",
-                        pipeline: [{ $project: { _id: 1, firstname: 1, lastname: 1, email: 1 } }],
+                        pipeline: [{ $project: { _id: 0, firstname: 1, lastname: 1, email: 1 } }],
                         as: "receiver_details",
                     },
                 },
@@ -136,32 +135,32 @@ const getMessageList = async (req, user, res) => {
                         from: "upload_files",
                         localField: "attechment_id",
                         foreignField: "_id",
-                        pipeline: [{ $project: { _id: 1, name: 1, url: 1, size: 1 } }],
+                        pipeline: [{ $project: { _id: 0, name: 1, url: 1, size: 1 } }],
                         as: "attechment_details",
                     },
                 },
-                { $sort: { created_at: -1 } } // Sort by newest first
+                { $sort: { created_at: -1 } }
             ];
         } else {
             return responseData.fail(res, "Invalid parameters", 400);
         }
 
-        logger.info(`Query: ${JSON.stringify(query)}`);
-        await MessageSchema.aggregate(query).then(async (result) => {
-           if (result.length !== 0) {
-                logger.info(`Message list ${result}`);
-                return responseData.success(res, result, `Message ${messageConstants.LIST_FETCHED_SUCCESSFULLY}`);
-            } else {
-                logger.info(`Message ${messageConstants.LIST_NOT_FOUND}`);
-                return responseData.fail(res, `Message ${messageConstants.LIST_NOT_FOUND}`, 204)
-            }
-        }).catch(function (err) {
-            logger.error(messageConstants.INTERNAL_SERVER_ERROR, err);
-            return responseData.fail(res, messageConstants.INTERNAL_SERVER_ERROR, 500)
-        })
+        // Debugging log
+        console.log("Aggregation Query:", JSON.stringify(query, null, 2));
 
-    })
-}
+        const result = await MessageSchema.aggregate(query);
+
+        if (result.length > 0) {
+            return responseData.success(res, result, `Message ${messageConstants.LIST_FETCHED_SUCCESSFULLY}`);
+        } else {
+            return responseData.fail(res, `Message ${messageConstants.LIST_NOT_FOUND}`, 204);
+        }
+    } catch (error) {
+        logger.error(messageConstants.INTERNAL_SERVER_ERROR, error);
+        return responseData.fail(res, messageConstants.INTERNAL_SERVER_ERROR, 500);
+    }
+};
+
 
 
 module.exports = {
