@@ -20,10 +20,10 @@ const MessageSchema = new mongoose.Schema({
        // required: true 
     },
 
-    attechment_id: {
+    attechment_id: [{
         type: mongoose.Schema.Types.ObjectId, 
         ref: "upload_files",
-    },
+    }],
 
     room_id: {
         type: mongoose.Schema.Types.ObjectId, 
@@ -36,6 +36,13 @@ const MessageSchema = new mongoose.Schema({
         //required: true,
     },
 
+    latitude: {
+        type: Number,
+    },
+
+    longitude: {
+        type: Number,
+    },
 
     created_at: {
         type: Date,

@@ -2,11 +2,11 @@ const UploadFile = require("../../models/upload_file");
 const cloudinary = require('cloudinary').v2;
 const fs = require("fs");
 
-const uploadFile = async (file, location) => {
+const uploadFile = async (file) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!file && !location) {
-                return reject(new Error("Either a file or a location must be provided."));
+            if (!file) {
+                return reject(new Error("file must be provided."));
             }
 
             let existingFile, savedFile;
@@ -47,26 +47,9 @@ const uploadFile = async (file, location) => {
                 });
             } 
 
-            else if (location) {
-                existingFile = await UploadFile.findOne({ 
-                    "location.latitude": location.latitude, 
-                    "location.longitude": location.longitude 
-                });
-                if (existingFile) {
-                    return resolve({
-                        _id: existingFile._id,
-                        fileType: existingFile.fileType,
-                        location: existingFile.location
-                    });
-                }
-
-                savedFile = new UploadFile({
-                    fileType: "location",
-                    location: { latitude: location.latitude, longitude: location.longitude },
-                });
-            }
-
+          
             const savedData = await savedFile.save();
+           // await savedFile.save();
 
             resolve({
                 _id: savedData._id,
@@ -74,7 +57,7 @@ const uploadFile = async (file, location) => {
                 size: savedData.size,
                 url: savedData.url,
                 fileType: savedData.fileType,
-                location: savedData.location
+         
             });
         } catch (error) {
             reject(new Error(`File upload failed: ${error.message}`));

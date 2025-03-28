@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const UploadFileSchema = mongoose.Schema({
     name: { 
         type: String, 
-        unique: true 
+        unique: true,
         // required: true 
     },
     size: { 
@@ -12,17 +12,14 @@ const UploadFileSchema = mongoose.Schema({
     },
     url: { 
         type: String, 
-        unique: true
+        default: null,
+       unique: true,
         // required: true 
     },
     fileType: { 
         type: String, 
         enum: ["image", "document", "audio", "video", "location"], 
       required: true 
-    },
-    location: { 
-        latitude: { type: Number},
-        longitude: { type: Number}
     },
 });
 

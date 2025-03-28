@@ -56,23 +56,7 @@ module.exports = (io) => {
         socket.on('chat_message', async (data) => {
             logger.info(`Data received in request body during chat_message ${JSON.stringify(data)}`);
         
-            // let attachmentId;
-
-            // if (data.file) {
-            //     try {
-            //         // const fileBuffer = Buffer.from(data.file.split(',')[1], 'base64');
-            //         const uploadedFile = await uploadFile(data.file);
-            //         attachmentId = uploadedFile._id; 
-                
-            //         logger.info(`File uploaded successfully with ID: ${attachmentId}`);
-            //     } catch (error) {
-            //         logger.error(`File upload failed: ${error.message}`);
-            //         return;
-            //     }
-            // }
-
-           //  data.attechment_id = attachmentId || null;
-            let saveMessage;
+           let saveMessage;
             if (data.room_id) {
                
                 const room = await RoomSchema.findById(data.room_id);
