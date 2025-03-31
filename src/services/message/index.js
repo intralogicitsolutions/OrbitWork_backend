@@ -62,103 +62,106 @@ const getMessage = async (body, userDetails, res) => {
 }
 
 const getMessageList = async (req, user, res) => {
-    try {
-        let query = [];
-
-        const senderId = new Types.ObjectId(user._id);
-        const receiverId = req.query.user_id ? new Types.ObjectId(req.query.user_id) : null;
-        const roomId = req.query.room_id ? new Types.ObjectId(req.query.room_id) : null;
-
-        if (roomId) {
-            query = [
-                { $match: { room_id: roomId } },
-                { 
-                    $lookup: {
-                        from: "users",
-                        localField: "sender_id",
-                        foreignField: "_id",
-                        pipeline: [{ $project: { _id: 0, firstname: 1, lastname: 1, email: 1 } }],
-                        as: "sender_details",
+    return new Promise(async ()=> {
+        try {
+            let query = [];
+    
+            const senderId = new Types.ObjectId(user._id);
+            const receiverId = req.query.user_id ? new Types.ObjectId(req.query.user_id) : null;
+            const roomId = req.query.room_id ? new Types.ObjectId(req.query.room_id) : null;
+    
+            if (roomId) {
+                query = [
+                    { $match: { room_id: roomId } },
+                    { 
+                        $lookup: {
+                            from: "users",
+                            localField: "sender_id",
+                            foreignField: "_id",
+                            pipeline: [{ $project: { _id: 0, firstname: 1, lastname: 1, email: 1 } }],
+                            as: "sender_details",
+                        },
                     },
-                },
-                {
-                    $lookup: {
-                        from: "upload_files",
-                        localField: "attechment_id",
-                        foreignField: "_id",
-                        pipeline: [{ $project: { _id: 0, name: 1, url: 1, size: 1 } }],
-                        as: "attechment_details",
+                    {
+                        $lookup: {
+                            from: "upload_files",
+                            localField: "attechment_id",
+                            foreignField: "_id",
+                            pipeline: [{ $project: { _id: 0, name: 1, url: 1, size: 1 } }],
+                            as: "attechment_details",
+                        },
                     },
-                },
-                {
-                    $lookup: {
-                        from: "rooms",
-                        localField: "room_id",
-                        foreignField: "_id",
-                        pipeline: [{ $project: { _id: 0, name: 1, members: 1 } }],
-                        as: "room_details",
+                    {
+                        $lookup: {
+                            from: "rooms",
+                            localField: "room_id",
+                            foreignField: "_id",
+                            pipeline: [{ $project: { _id: 0, name: 1, members: 1 } }],
+                            as: "room_details",
+                        },
                     },
-                },
-                { $sort: { created_at: -1 } } 
-            ];
-        } 
-        else if (receiverId) {
-            query = [
-                {
-                    $match: {
-                        $or: [
-                            { sender_id: senderId, receiver_id: receiverId },
-                            { sender_id: receiverId, receiver_id: senderId }
-                        ]
-                    }
-                },
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "sender_id",
-                        foreignField: "_id",
-                        pipeline: [{ $project: { _id: 0, firstname: 1, lastname: 1, email: 1 } }],
-                        as: "sender_details",
+                    { $sort: { created_at: -1 } } 
+                ];
+            } 
+            else if (receiverId) {
+                query = [
+                    {
+                        $match: {
+                            $or: [
+                                { sender_id: senderId, receiver_id: receiverId },
+                                { sender_id: receiverId, receiver_id: senderId }
+                            ]
+                        }
                     },
-                },
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "receiver_id",
-                        foreignField: "_id",
-                        pipeline: [{ $project: { _id: 0, firstname: 1, lastname: 1, email: 1 } }],
-                        as: "receiver_details",
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "sender_id",
+                            foreignField: "_id",
+                            pipeline: [{ $project: { _id: 0, firstname: 1, lastname: 1, email: 1 } }],
+                            as: "sender_details",
+                        },
                     },
-                },
-                {
-                    $lookup: {
-                        from: "upload_files",
-                        localField: "attechment_id",
-                        foreignField: "_id",
-                        pipeline: [{ $project: { _id: 0, name: 1, url: 1, size: 1 } }],
-                        as: "attechment_details",
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "receiver_id",
+                            foreignField: "_id",
+                            pipeline: [{ $project: { _id: 0, firstname: 1, lastname: 1, email: 1 } }],
+                            as: "receiver_details",
+                        },
                     },
-                },
-                { $sort: { created_at: -1 } }
-            ];
-        } else {
-            return responseData.fail(res, "Invalid parameters", 400);
+                    {
+                        $lookup: {
+                            from: "upload_files",
+                            localField: "attechment_id",
+                            foreignField: "_id",
+                            pipeline: [{ $project: { _id: 0, name: 1, url: 1, size: 1 } }],
+                            as: "attechment_details",
+                        },
+                    },
+                    { $sort: { created_at: -1 } }
+                ];
+            } else {
+                return responseData.fail(res, "Invalid parameters", 400);
+            }
+    
+            // Debugging log
+            // console.log("Aggregation Query:", JSON.stringify(query, null, 2));
+    
+            const result = await MessageSchema.aggregate(query);
+    
+            if (result.length > 0) {
+                return responseData.success(res, result, `Message ${messageConstants.LIST_FETCHED_SUCCESSFULLY}`);
+            } else {
+                return responseData.fail(res, `Message ${messageConstants.LIST_NOT_FOUND}`, 204);
+            }
+        } catch (error) {
+            logger.error(messageConstants.INTERNAL_SERVER_ERROR, error);
+            return responseData.fail(res, messageConstants.INTERNAL_SERVER_ERROR, 500);
         }
-
-        // Debugging log
-        console.log("Aggregation Query:", JSON.stringify(query, null, 2));
-
-        const result = await MessageSchema.aggregate(query);
-
-        if (result.length > 0) {
-            return responseData.success(res, result, `Message ${messageConstants.LIST_FETCHED_SUCCESSFULLY}`);
-        } else {
-            return responseData.fail(res, `Message ${messageConstants.LIST_NOT_FOUND}`, 204);
-        }
-    } catch (error) {
-        logger.error(messageConstants.INTERNAL_SERVER_ERROR, error);
-        return responseData.fail(res, messageConstants.INTERNAL_SERVER_ERROR, 500);
-    }
+    });
+    
 };
 
 
