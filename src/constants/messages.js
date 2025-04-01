@@ -55,6 +55,12 @@ const messageConstants = {
     JOB_PROPOSAL_ID_REQUIRED: 'Job Proposal ID is required',
     JOB_PROPOSAL_UPDATE_SUCCESS: 'job proposal updated successfull',
     JOB_PROPOSAL_DELETE_SUCCESS: 'job proposal deleted successfull',
+    MESSAGE_NOT_FOUND: 'Message not found',
+    MESSAGE_UPDATED_SUCCESS: 'Message updated successfull',
+    MESSAGE_UPDATE_FAILED: 'Failed to message upload',
+    MESSAGE_DELETED_SUCCESS: 'message deleted successfully',
+    MESSAGE_DELETE_FAILED: 'message deleted failed',
+
 
 }
 
